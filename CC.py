@@ -14,7 +14,7 @@ from chainer import cuda
 from nltk.tokenize import casual_tokenize
 
 class CC:
-    def __init__(self, use_gpu=False, gpu=0, model_path='model/cc.opensub.bst', maxlen=20, beam=5, penalty=1, nbest=1):
+    def __init__(self, use_gpu=False, gpu=0, model_path='model/conversation_model.4', maxlen=20, beam=5, penalty=1, nbest=1):
         print('initialize Chitchat module')
         self.use_gpu = use_gpu
         self.num_turn_history = 2  # 2 consecutive turns as history baseline
@@ -25,7 +25,7 @@ class CC:
             self.xp = cuda.cupy
         else:
             #chainer.cuda.available = False
-            xp = np
+            self.xp = np
 
         # use chainer in testing mode
         chainer.config.train = False
@@ -34,7 +34,7 @@ class CC:
         print('Loading model params from ' + model_path)
         with open(model_path, 'rb') as f:
             #pdb.set_trace()
-            self.vocab, self.model, train_args = pickle.load(f)
+            self.vocab, self.model, _ = pickle.load(f)
             #pdb.set_trace()
         if self.use_gpu and gpu >= 0:
             self.model.to_gpu()
