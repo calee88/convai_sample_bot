@@ -6,6 +6,7 @@ import numpy as np
 import sys
 #sys.path.append('../DSTC/ChatbotBaseline/egs/opensubs/tools') #bot.sh
 sys.path.append('DSTC/ChatbotBaseline/egs/opensubs/tools') #main
+from simpler_nlg import SimplerNLG
 
 #import seq2seq_model
 
@@ -14,7 +15,7 @@ from chainer import cuda
 from nltk.tokenize import casual_tokenize
 
 class CC:
-    def __init__(self, use_gpu=False, gpu=0, model_path='model/conversation_model.4', maxlen=20, beam=5, penalty=1, nbest=1):
+    def __init__(self, use_gpu=False, gpu=0, model_path='model/cc.opensub.bst', maxlen=20, beam=5, penalty=1, nbest=1):
         print('initialize Chitchat module')
         self.use_gpu = use_gpu
         self.num_turn_history = 2  # 2 consecutive turns as history baseline
@@ -103,17 +104,16 @@ class CC:
                                                    nbest=self.nbest)
 
         #print('cc4')
-        reply = ""
+        reply = []
 
         #print('cc5')
         for w in besthyps[0][0]:
             if w != self.eos:
-                reply += self.vocablist[w] + " "
+                reply.append(self.vocablist[w])
 
         #print('cc6')
-        reply = reply[:-1]
 
-        return reply
+        return SimplerNLG.realise(reply)
 
 
 if __name__ == "__main__":
